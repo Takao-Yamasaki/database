@@ -4,6 +4,7 @@ create table if not exists articles (
   title varchar(100) not null,
   contents text not null,
   username varchar(100) not null,
+  nice integer not null,
   created_at datetime
 );
 
