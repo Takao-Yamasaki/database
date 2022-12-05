@@ -8,8 +8,8 @@ create table if not exists articles (
 );
 
 -- コメントデータを格納するテーブル
-create table if not exists contents (
-  comment_id integer unsigned auto_increment primary_key,
+create table if not exists comments (
+  comment_id integer unsigned auto_increment primary key,
   article_id integer unsigned not null,
   message text not null,
   created_at datetime,
