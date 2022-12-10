@@ -20,13 +20,14 @@ func main() {
 	}
 	defer db.Close()
 
+	// クエリの定義
 	articleID := 1
 	const sqlStr = `
 		select *
 		from articles
 		where article_id = ?;
 	`
-
+	// クエリの実行
 	rows, err := db.Query(sqlStr, articleID)
 	if err != nil {
 		fmt.Println(err)
@@ -34,11 +35,9 @@ func main() {
 	}
 	defer rows.Close()
 
-	articleArray := make([]models.Article, 0)
+	var article models.Article
+	var createdTime sql.NullTime
 	for rows.Next() {
-		var article models.Article
-		var createdTime sql.NullTime
-
 		err := rows.Scan(&article.ID, &article.Title, &article.Contents, &article.UserName, &article.NiceNum, &createdTime)
 
 		// validフィールドがnullであったか確認する
@@ -48,10 +47,8 @@ func main() {
 
 		if err != nil {
 			fmt.Println(err)
-		} else {
-			articleArray = append(articleArray, article)
 		}
 	}
 
-	fmt.Printf("%+v\n", articleArray)
+	fmt.Printf("%+v\n", article)
 }
