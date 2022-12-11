@@ -20,35 +20,26 @@ func main() {
 	}
 	defer db.Close()
 
-	// クエリの定義
-	articleID := 1
+	// データを挿入する処理
+	article := models.Article{
+		Title:    "insert test",
+		Contents: "Can I insert data correctly?",
+		UserName: "saki",
+	}
+
 	const sqlStr = `
-		select *
-		from articles
-		where article_id = ?;
+	insert into articles (title, contents, username, nice, created_at) values
+	(?, ?, ?, 0, now());
 	`
-	// クエリの実行
-	rows, err := db.Query(sqlStr, articleID)
+
+	// クエリ変数の埋め込み可能
+	result, err := db.Exec(sqlStr, article.Title, article.Contents, article.UserName)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	defer rows.Close()
 
-	var article models.Article
-	var createdTime sql.NullTime
-	for rows.Next() {
-		err := rows.Scan(&article.ID, &article.Title, &article.Contents, &article.UserName, &article.NiceNum, &createdTime)
-
-		// validフィールドがnullであったか確認する
-		if createdTime.Valid {
-			article.CreatedAt = createdTime.Time
-		}
-
-		if err != nil {
-			fmt.Println(err)
-		}
-	}
-
-	fmt.Printf("%+v\n", article)
+	fmt.Println(result.LastInsertId())
+	// 影響範囲を調べる
+	fmt.Println(result.RowsAffected())
 }
